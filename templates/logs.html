@@ -3,9 +3,9 @@
         <title>Hugo Server's Logs</title>
     </head>
     <body>
-        <h1>Recent logs of your IP: {{ ip }}</h1>
-        <p> Visitor's info: {{ UA }} </p>
-        <p> There are {{ len }} logs found.</p>
+        <h1>Recent logs</h1>
+        <p> IP地址: {{ ip }}, 来自: {{ loc }}<br>{{ UA }} </p>
+        <p> 找到关于你的{{ len }}条日志:</p>
         <p>
         {% for line in logs %}
         	{{ line }}<br>
