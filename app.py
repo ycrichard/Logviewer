@@ -21,9 +21,9 @@ app = Flask(__name__)
 def show_log():
     with open(logfile,'r') as f:
         data = f.read().split('\n')
-        data.reverse()	# reverse the timeline sorting order
-#    results = [ if line.find('188.') == True for line in data ]
-    return render_template('logs.html', logs=data)
+    data.reverse()	# reverse the timeline order
+    results = [ line for line in data if line.find(ip) >=0 ]
+    return render_template('logs.html', logs=results)
 
 if __name__ == '__main__':
     app.run(debug=True)
