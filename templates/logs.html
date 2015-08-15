@@ -3,7 +3,9 @@
         <title>Hugo Server's Logs</title>
     </head>
     <body>
-        <h1>Recent logs</h1>
+        <h1>Recent logs of your IP: {{ ip }}</h1>
+        <p> Visitor's info: {{ UA }} </p>
+        <p> There are {{ len }} logs found.</p>
         <p>
         {% for line in logs %}
         	{{ line }}<br>

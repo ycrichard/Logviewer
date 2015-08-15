@@ -1,5 +1,8 @@
 2015-08-08 05:14:54 INFO     connecting fbcdn-sphotos-e-a.akamaihd.net:443 from 113.91.12.148:51092
 2015-08-08 05:15:01 INFO     connecting fbcdn-sphotos-d-a.akamaihd.net:443 from 113.91.12.148:51096
+2015-08-08 10:40:45 TEST     connecting 68.60.109.104:1024 from 10.0.0.7:51334
+2015-08-08 10:40:45 TEST     connecting 68.60.109.104:1024 from 10.0.0.2:51334
+2015-08-08 10:40:45 TEST     connecting 68.60.109.104:1024 from 10.0.0.7:51335
 2015-08-08 09:14:33 INFO     connecting s.ytimg.com:443 from 113.91.12.148:51091
 2015-08-08 09:53:51 INFO     connecting 50.188.131.109:55551 from 113.91.12.148:52553
 2015-08-08 09:55:09 INFO     connecting 198.50.206.130:21090 from 113.91.12.148:53243
