@@ -1,0 +1,13 @@
+<html>
+    <head>
+        <title>Hugo Server's Logs</title>
+    </head>
+    <body>
+        <h1>Recent logs</h1>
+        <p>
+        {% for line in logs %}
+        	{{ line }}<br>
+        {% endfor %}
+        </p>
+    </body>
+</html>
