@@ -1,6 +1,9 @@
 # all the imports
 from flask import Flask, render_template
-from configparser import ConfigParser
+try:
+    from configparser import ConfigParser
+except ImportError:
+    from ConfigParser import ConfigParser  # ver. < 3.0
 
 # instantiate
 config = ConfigParser()
@@ -20,9 +23,10 @@ app = Flask(__name__)
 @app.route('/viewlog')
 def show_log():
     with open(logfile,'r') as f:
-        data = f.read().split('\n')
-    data.reverse()	# reverse the timeline order
+        # data = f.read().split('\n')
+        data = f.readlines()
     results = [ line for line in data if line.find(ip) >=0 ]
+    results.reverse()	# reverse the timeline order
     return render_template('logs.html', logs=results)
 
 if __name__ == '__main__':

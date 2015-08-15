@@ -1,4 +1,7 @@
-from configparser import ConfigParser
+try:
+    from configparser import ConfigParser
+except ImportError:
+    from ConfigParser import ConfigParser  # ver. < 3.0
 
 def config_gen():
 	# SECRET_KEY = 'qweR'
