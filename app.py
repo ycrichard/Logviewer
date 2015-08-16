@@ -53,7 +53,7 @@ def viewlog():
     return render_template('logs.html', logs=results, ip=ip, 
     	loc=location, UA=UA_string)
 
-@app.route('/fulllog')
+@app.route('/viewlog/full')
 def fulllog():
     # get ip address from request user
     ip = request.remote_addr
