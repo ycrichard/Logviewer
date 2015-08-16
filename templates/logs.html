@@ -3,35 +3,4 @@
 
 <p><strong><a href="{{ url_for('fulllog')}}">全部日志</a>, 找到关于你的{{ logs|length }}条日志:</strong></p>
 
-
-<table class="table table-striped table-hover ">
-  <thead>
-    <tr>
-      <th>#</th>
-      <th>Time</th>
-      <th>Type</th>
-      <th>Message</th>
-    </tr>
-  </thead>
-  <tbody>
-    {% for line in logs %}
-        {% if line[1]=='ERROR' %}
-            <tr class="danger">
-        {% elif line[1]=='WARNING' %}
-            <tr class="warning">
-        {% elif line[1]=='INFO' %}
-            <tr class="info">
-        {% else %}
-            <tr>
-        {% endif %}
-              <td>{{ loop.index }}</td>
-              <td>{{line[0]}}</td>
-              <td>{{line[1]}}</td>
-              <td>{{line[2]}}</td>
-            </tr>
-    {% endfor %}
-  </tbody>
-</table> 
-
-</html>
 {% endblock %}
