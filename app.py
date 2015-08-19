@@ -32,7 +32,6 @@ def split_logline(line):
 #    newline.append(' '.join(segments[3:]))
     return newline
 
-
 @app.route('/viewlog/')
 def viewlog():
 	# get ip address from request user
