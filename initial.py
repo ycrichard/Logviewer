@@ -6,7 +6,8 @@ except ImportError:
 def config_gen():
 	# SECRET_KEY = 'qweR'
 	config = ConfigParser()
-	config['DEFAULT']['logfile'] = 'shadowsocks.logs'    
+	config['DEFAULT']['logfile'] = 'shadowsocks.log'
+	# config['DEFAULT']['logfile'] = '/var/log/shadowsocks.log'  
 	config['DEFAULT']['IP'] = '188.154.76.109'   
 	
 	with open('logviewer.ini', 'w') as configfile:    # save

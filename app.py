@@ -24,10 +24,12 @@ app = Flask(__name__)
 
 def split_logline(line):
     segments = line.split()
-    newline = ['','','']
-    newline[0] = ' '.join(segments[0:2])
-    newline[1] = segments[2]
-    newline[2] = ' '.join(segments[3:])
+    # tuple
+    newline = (' '.join(segments[0:2]),segments[2],' '.join(segments[3:]))
+#    newline = []
+#    newline.append(' '.join(segments[0:2]))
+#    newline.append(segments[2])
+#    newline.append(' '.join(segments[3:]))
     return newline
 
 
@@ -41,10 +43,10 @@ def viewlog():
     	response = reader.city(ip)
     	location = response.city.names['zh-CN'] +', '+ response.country.names['zh-CN']
     except:
-    	location = 'unknow location'
+    	location = 'unknown location'
 
     # get log file
-    with open(logfile,'rb') as f:
+    with open(logfile,'r') as f:
     	data = f.readlines()
     
     results = [ split_logline(line) for line in data if line.find(ip) >=0 ]
@@ -66,7 +68,7 @@ def fulllog():
         location = 'unknow location'
 
     # get log file
-    with open(logfile,'rb') as f:
+    with open(logfile,'r') as f:
         data = f.readlines()
     results = [ split_logline(line) for line in data]
     results.reverse()   # reverse the timeline order 
