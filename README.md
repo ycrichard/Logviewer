@@ -4,4 +4,4 @@ A web application for the server to display and search shadowsock's log accordin
 
 Visitor's IP address, user-agent and geo-location is detected.
 
-In terms of search box, normal strings as well as 'regular expression' are supported
+In terms of search box, normal strings as well as 'regular expressions' are supported
