@@ -1,5 +1,4 @@
 # Logviewer
-To view logs on Hugo's server
 
 A web application for the server to display and search shadowsock's log according to user information.
 
