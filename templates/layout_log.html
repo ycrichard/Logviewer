@@ -48,7 +48,8 @@ rel="stylesheet">
 </blockquote>
 
 
-<p># {{1+ (numpage-1)*100}} - {{100++ (numpage-1)*100}}. <strong>共{{ numlog }}条相关日志, 过滤条件: </strong> <abbr title="Current search condition">'{{ key }}'</abbr></p>
+<p>#{{1+ (numpage-1)*100}} - #{% if numlog > 100+(numpage-1)*100 %}{{ 100+ (numpage-1)*100 }}{% else %}{{ numlog }}{% endif %}.
+  <strong>共{{ numlog }}条相关日志, 过滤条件: </strong> <abbr title="Current search condition">'{{ key }}'</abbr></p>
 {% set id = '' %}
 {% if 'full' in request.path %}
 {% set id = 'full' %}
