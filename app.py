@@ -48,7 +48,7 @@ def viewlog(id):
     session['ip']=request.remote_addr
     session['UA']=request.user_agent.string 
     try:
-        response = reader.city(ip)
+        response = reader.city(session['ip'])
         location = response.city.names['zh-CN'] +', '+ response.country.names['zh-CN']
     except:
         location = 'unknown location'
