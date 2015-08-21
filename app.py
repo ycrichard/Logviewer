@@ -39,24 +39,8 @@ def viewlog_index():
 def viewlog(id): 
 
     if request.method == 'POST':
-        session['page'] = 1
-        data = session['data']
-        data = [ line for line in data 
-            if re.search(request.form['text'],line, re.IGNORECASE) ]
-        
-        session['data'] =data
-        session['keyword']=session['keyword'] + "' --> '" + request.form['text']
-        
-
-        total_length=len(data)  
-        data.reverse()  # reverse the timeline order 
-        # paging slection
-        results=data[(session['page']-1)*100:session['page']*100]
-        results = [ split_logline(line) for line in results]
-    
-        return render_template('layout_log.html', logs=results, ip=session['ip'], 
-        loc=session['location'], UA=session['UA'], key=session['keyword'], numlog=total_length, numpage=session['page'])
-
+        session['keyword']=request.form['text']
+        return redirect(url_for('viewlog',id='search'))
 
     session['page'] = 1
 
@@ -68,8 +52,10 @@ def viewlog(id):
         location = response.city.names['zh-CN'] +', '+ response.country.names['zh-CN']
     except:
         location = 'unknown location'
+        
     session['location']=location    
     session['page'] =1
+
     # get log file
     with open(logfile,'r') as f:
         data = f.readlines()    
@@ -85,11 +71,11 @@ def viewlog(id):
         data = [ line for line in data
          if re.search(r'\s+ERROR\s+|\s+WARNING\s+',line)]
         session['keyword']='ERROR|WARNING'
+    elif id == 'search':
+        data = [ line for line in data 
+         if re.search(session['keyword'],line, re.IGNORECASE) ]
 
     session['data']=data
-    
-    #data = session['data']
-    #keyword = session['keyword']
 
     total_length=len(data)    
 
@@ -107,24 +93,8 @@ def viewlog_page(id, page):
 
     if request.method == 'POST':
         session['page'] = 1
-        data = session['data']
-        
-        data = [ line for line in data 
-            if re.search(request.form['text'],line, re.IGNORECASE) ]
-        
-        session['data'] =data
-        session['keyword']=session['keyword'] + "' --> '" + request.form['text']
-        
-
-        total_length=len(data)  
-        data.reverse()  # reverse the timeline order 
-        # paging slection
-        results=data[(session['page']-1)*100:session['page']*100]
-        results = [ split_logline(line) for line in results]
-    
-        return render_template('layout_log.html', logs=results, ip=session['ip'], 
-        loc=session['location'], UA=session['UA'], key=session['keyword'], numlog=total_length, numpage=session['page'])
-
+        session['keyword']=request.form['text']
+        return redirect(url_for('viewlog',id='search'))
 
     session['page'] = page
     data = session['data']
