@@ -30,19 +30,7 @@ def split_logline(line):
     newline = (' '.join(segments[0:2]),segments[2],' '.join(segments[3:]))
     return newline
 
-@app.route('/viewlog/')
-def viewlog_index():
-    # session['page'] = 0
-    return redirect(url_for('viewlog',id='me'))
-
-@app.route('/viewlog/<string:id>/', methods=['GET', 'POST'])
-def viewlog(id): 
-
-    if request.method == 'POST':
-        session['page'] = 1
-        session['keyword']=request.form['text']
-        return redirect(url_for('viewlog',id='search'))
-
+def user_info():
     # get ip address from request user
     session['ip']=request.remote_addr
     session['UA']=request.user_agent.string 
@@ -50,10 +38,31 @@ def viewlog(id):
         response = reader.city(session['ip'])
         location = response.city.names['zh-CN'] +', '+ response.country.names['zh-CN']
     except:
-        location = 'unknown location'
-        
+        location = 'unknown location'       
     session['location']=location
-    session['page'] = 1
+
+@app.route('/viewlog/')
+def viewlog_index():
+    
+    user_info()
+    return redirect(url_for('viewlog_page',id='me',page=1))
+
+@app.route('/viewlog/<string:id>/')
+def viewlog(id): 
+
+    user_info()
+    return redirect(url_for('viewlog_page',id=id,page=1))
+
+
+@app.route('/viewlog/<string:id>/<int:page>', methods=['GET', 'POST'])
+def viewlog_page(id, page):
+
+    if request.method == 'POST':
+        session['keyword']=request.form['text']
+        return redirect(url_for('viewlog_page',id='search',page=1))
+
+    if 'ip' not in session:
+        user_info()
 
     # get log file
     with open(logfile,'r') as f:
@@ -73,32 +82,20 @@ def viewlog(id):
     elif id == 'search':
         data = [ line for line in data 
          if re.search(session['keyword'],line, re.IGNORECASE) ]
+    else:
+        return 'Page not Found'
 
-    session['data']=data
-
-    return redirect(url_for('viewlog_page',id=id,page=session['page']))
-
-
-@app.route('/viewlog/<string:id>/<int:page>', methods=['GET', 'POST'])
-def viewlog_page(id, page):
-
-    if request.method == 'POST':
-        session['page'] = 1
-        session['keyword']=request.form['text']
-        return redirect(url_for('viewlog',id='search'))
-
-    session['page'] = page
-    data = session['data']
-
-    total_length=len(data)    
+    total_length=len(data) 
+    if (page > total_length //100 +1)|(page <=0) :
+        return 'Page not Found'
 
     data.reverse()	# reverse the timeline order 
     # paging slection
-    results=data[(session['page']-1)*100:session['page']*100]
+    results=data[(page-1)*100:page*100]
     results = [ split_logline(line) for line in results]
 
     return render_template('layout_log.html', logs=results, ip=session['ip'], 
-    	loc=session['location'], UA=session['UA'], key=session['keyword'], numlog=total_length, numpage=session['page'])
+    	loc=session['location'], UA=session['UA'], key=session['keyword'], numlog=total_length, numpage=page)
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', debug=True)
