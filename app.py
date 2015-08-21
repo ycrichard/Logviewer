@@ -32,57 +32,102 @@ def split_logline(line):
 
 @app.route('/viewlog/')
 def viewlog_index():
+    # session['page'] = 0
+    return redirect(url_for('viewlog',id='me'))
+
+@app.route('/viewlog/<string:id>/', methods=['GET', 'POST'])
+def viewlog(id): 
+
+    if request.method == 'POST':
+        session['page'] = 1
+        data = session['data']
+        data = [ line for line in data 
+            if re.search(request.form['text'],line, re.IGNORECASE) ]
+        
+        session['data'] =data
+        session['keyword']=session['keyword'] + "' --> '" + request.form['text']
+        
+
+        total_length=len(data)  
+        data.reverse()  # reverse the timeline order 
+        # paging slection
+        results=data[(session['page']-1)*100:session['page']*100]
+        results = [ split_logline(line) for line in results]
+    
+        return render_template('layout_log.html', logs=results, ip=session['ip'], 
+        loc=session['location'], UA=session['UA'], key=session['keyword'], numlog=total_length, numpage=session['page'])
+
+
     session['page'] = 1
-    return redirect(url_for('viewlog',id='me',page=session['page']))
 
-@app.route('/viewlog/<string:id>/<int:page>', methods=['GET', 'POST'])
-def viewlog(id, page):
-    if 'page' not in session:
-        # if we have no page in the session we go to the index
-        return redirect(url_for('viewlog_index'))
     # get ip address from request user
-    session['page'] = page
-
-    ip = request.remote_addr
-    # user agent
-    UA_string  = request.user_agent.string 
+    session['ip']=request.remote_addr
+    session['UA']=request.user_agent.string 
     try:
         response = reader.city(ip)
         location = response.city.names['zh-CN'] +', '+ response.country.names['zh-CN']
     except:
         location = 'unknown location'
-
+    session['location']=location    
+    session['page'] =1
     # get log file
     with open(logfile,'r') as f:
-        data = f.readlines()
-
-    keyword=''
-
+        data = f.readlines()    
+    # session['keyword']=''
     if id == 'full':
         # data = [ line for line in data]
-        keyword='.*'
+        session['keyword']='.*'
     elif id == 'me':
         data = [ line for line in data
-         if line.find(ip) >=0 ]
-        keyword=ip
+         if line.find(session['ip']) >=0 ]
+        session['keyword']=session['ip']
     elif id == 'error':
         data = [ line for line in data
          if re.search(r'\s+ERROR\s+|\s+WARNING\s+',line)]
-        keyword='ERROR|WARNING'
+        session['keyword']='ERROR|WARNING'
+
+    session['data']=data
+    
+    #data = session['data']
+    #keyword = session['keyword']
+
+    total_length=len(data)    
+
+    data.reverse()  # reverse the timeline order 
+    # paging slection
+    results=data[(session['page']-1)*100:session['page']*100]
+    results = [ split_logline(line) for line in results]
+
+    return render_template('layout_log.html', logs=results, ip=session['ip'], 
+        loc=session['location'], UA=session['UA'], key=session['keyword'], numlog=total_length, numpage=session['page'])
+
+
+@app.route('/viewlog/<string:id>/<int:page>', methods=['GET', 'POST'])
+def viewlog_page(id, page):
 
     if request.method == 'POST':
+        session['page'] = 1
+        data = session['data']
+        
         data = [ line for line in data 
             if re.search(request.form['text'],line, re.IGNORECASE) ]
-        keyword=keyword + "' --> '" + request.form['text']
-        # 
-        # data.reverse()  # reverse the timeline order 
-        # # paging slection
-        # results=data[(session['page']-1)*100:session['page']*100]
-        # results = [ split_logline(line) for line in results]
-    # 
-        # return render_template('layout_log.html', logs=results, ip=ip, 
-        #     loc=location, UA=UA_string, key=keyword, numlog=total_length, numpage=session['page'])
+        
+        session['data'] =data
+        session['keyword']=session['keyword'] + "' --> '" + request.form['text']
+        
 
+        total_length=len(data)  
+        data.reverse()  # reverse the timeline order 
+        # paging slection
+        results=data[(session['page']-1)*100:session['page']*100]
+        results = [ split_logline(line) for line in results]
+    
+        return render_template('layout_log.html', logs=results, ip=session['ip'], 
+        loc=session['location'], UA=session['UA'], key=session['keyword'], numlog=total_length, numpage=session['page'])
+
+
+    session['page'] = page
+    data = session['data']
 
     total_length=len(data)    
 
@@ -91,8 +136,8 @@ def viewlog(id, page):
     results=data[(session['page']-1)*100:session['page']*100]
     results = [ split_logline(line) for line in results]
 
-    return render_template('layout_log.html', logs=results, ip=ip, 
-    	loc=location, UA=UA_string, key=keyword, numlog=total_length, numpage=session['page'])
+    return render_template('layout_log.html', logs=results, ip=session['ip'], 
+    	loc=session['location'], UA=session['UA'], key=session['keyword'], numlog=total_length, numpage=session['page'])
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', debug=True)

@@ -24,9 +24,9 @@ rel="stylesheet">
 
     <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
       <ul class="nav navbar-nav">
-        <li {% if 'me' in request.path %}class="active"{% endif %}><a href="{{ url_for('viewlog',id='me',page = 1) }}">Me {% if 'me' in request.path %}<span class="badge">{{ numlog }}</span>{% endif %}</a></li>
-        <li {% if 'full' in request.path %}class="active"{% endif %}><a href="{{ url_for('viewlog',id='full',page = 1) }}">Full logs {% if 'full' in request.path %}<span class="badge">{{ numlog }}</span>{% endif %}</a></li>
-        <li {% if 'error' in request.path %}class="active"{% endif %}><a href="{{ url_for('viewlog',id='error',page = 1) }}">Error {% if 'error' in request.path %}<span class="badge">{{ numlog }}</span>{% endif %}</a></li>
+        <li {% if 'me' in request.path %}class="active"{% endif %}><a href="{{ url_for('viewlog',id='me') }}">Me {% if 'me' in request.path %}<span class="badge">{{ numlog }}</span>{% endif %}</a></li>
+        <li {% if 'full' in request.path %}class="active"{% endif %}><a href="{{ url_for('viewlog',id='full') }}">Full logs {% if 'full' in request.path %}<span class="badge">{{ numlog }}</span>{% endif %}</a></li>
+        <li {% if 'error' in request.path %}class="active"{% endif %}><a href="{{ url_for('viewlog',id='error') }}">Error {% if 'error' in request.path %}<span class="badge">{{ numlog }}</span>{% endif %}</a></li>
       </ul>
       <form class="navbar-form navbar-left" role="search" method="POST">
         <div class="form-group">
@@ -58,11 +58,11 @@ rel="stylesheet">
 {% set id = 'error' %}
 {% endif %}
 <ul class="pagination pagination-sm pull-middle">
-  <li {% if numpage == 1 %}class="disabled"{% endif %}><a href="{{ url_for('viewlog',id=id,page = numpage - 1) }}">«</a></li>
+  <li {% if numpage == 1 %}class="disabled"{% endif %}><a href="{{ url_for('viewlog_page',id=id,page = numpage - 1) }}">«</a></li>
   {% for i in range(0, 1+ numlog // 100) %}
-  <li {% if numpage == loop.index %}class="active"{% endif %}><a href="{{ url_for('viewlog',id=id,page = loop.index) }}">{{ loop.index }}</a></li>
+  <li {% if numpage == loop.index %}class="active"{% endif %}><a href="{{ url_for('viewlog_page',id=id,page = loop.index) }}">{{ loop.index }}</a></li>
   {% endfor %}
-  <li {% if numpage == 1+ numlog // 100 %}class="disabled"{% endif %}><a href="{{ url_for('viewlog',id=id,page = numpage + 1) }}">»</a></li>
+  <li {% if numpage == 1+ numlog // 100 %}class="disabled"{% endif %}><a href="{{ url_for('viewlog_page',id=id,page = numpage + 1) }}">»</a></li>
 </ul>
 
 
