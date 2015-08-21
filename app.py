@@ -39,10 +39,9 @@ def viewlog_index():
 def viewlog(id): 
 
     if request.method == 'POST':
+        session['page'] = 1
         session['keyword']=request.form['text']
         return redirect(url_for('viewlog',id='search'))
-
-    session['page'] = 1
 
     # get ip address from request user
     session['ip']=request.remote_addr
@@ -53,8 +52,8 @@ def viewlog(id):
     except:
         location = 'unknown location'
         
-    session['location']=location    
-    session['page'] =1
+    session['location']=location
+    session['page'] = 1
 
     # get log file
     with open(logfile,'r') as f:
@@ -77,15 +76,7 @@ def viewlog(id):
 
     session['data']=data
 
-    total_length=len(data)    
-
-    data.reverse()  # reverse the timeline order 
-    # paging slection
-    results=data[(session['page']-1)*100:session['page']*100]
-    results = [ split_logline(line) for line in results]
-
-    return render_template('layout_log.html', logs=results, ip=session['ip'], 
-        loc=session['location'], UA=session['UA'], key=session['keyword'], numlog=total_length, numpage=session['page'])
+    return redirect(url_for('viewlog_page',id=id,page=session['page']))
 
 
 @app.route('/viewlog/<string:id>/<int:page>', methods=['GET', 'POST'])
