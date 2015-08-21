@@ -14,7 +14,7 @@ try:
 	config.read('logviewer.ini')
 	# read values from a section
 	logfile = config.get('DEFAULT', 'logfile')
-	# ip = config.get('DEFAULT', 'ip')
+    # ip = config.get('DEFAULT', 'ip')
 except:
 	from initial import config_gen
 	config_gen()
@@ -44,13 +44,17 @@ def user_info():
 @app.route('/viewlog/')
 def viewlog_index():
     
-    user_info()
+    if 'ip' not in session:
+        user_info()
     return redirect(url_for('viewlog_page',id='me',page=1))
 
 @app.route('/viewlog/<string:id>/')
 def viewlog(id): 
 
-    user_info()
+    if 'ip' not in session:
+        user_info()
+    if 'keyword' not in session:
+        session['keyword']=''
     return redirect(url_for('viewlog_page',id=id,page=1))
 
 
@@ -64,12 +68,11 @@ def viewlog_page(id, page):
     if 'ip' not in session:
         user_info()
 
-    # get log file
+    # read log file
     with open(logfile,'r') as f:
-        data = f.readlines()    
-    # session['keyword']=''
+        data = f.readlines()   
+
     if id == 'full':
-        # data = [ line for line in data]
         session['keyword']='.*'
     elif id == 'me':
         data = [ line for line in data
@@ -83,19 +86,16 @@ def viewlog_page(id, page):
         data = [ line for line in data 
          if re.search(session['keyword'],line, re.IGNORECASE) ]
     else:
-        return 'Page not Found'
+        return 'Page do not existe'
 
-    total_length=len(data) 
-    if (page > total_length //100 +1)|(page <=0) :
-        return 'Page not Found'
+    if (page > len(data) //100 +1)|(page <=0) :
+       return 'Page index out of range'
 
     data.reverse()	# reverse the timeline order 
-    # paging slection
-    results=data[(page-1)*100:page*100]
-    results = [ split_logline(line) for line in results]
+    results = [ split_logline(line) for line in data] # table structure
 
-    return render_template('layout_log.html', logs=results, ip=session['ip'], 
-    	loc=session['location'], UA=session['UA'], key=session['keyword'], numlog=total_length, numpage=page)
+    return render_template('layout_log.html', logs=results, numpage=page, key=session['keyword'], 
+        ip=session['ip'], loc=session['location'], UA=session['UA'])
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', debug=True)

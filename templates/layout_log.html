@@ -25,17 +25,17 @@ rel="stylesheet">
     <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
       <ul class="nav navbar-nav">
         {% if 'me' in request.path %}
-          <li class="active"><a href="{{ url_for('viewlog',id='me') }}">Me <span class="badge">{{ numlog }}</span></a></li>
+          <li class="active"><a href="{{ url_for('viewlog',id='me') }}">Me <span class="badge">{{ logs|length }}</span></a></li>
         {% else %}
           <li><a href="{{ url_for('viewlog',id='me') }}">Me</a></li>
         {% endif %}
         {% if 'full' in request.path %}
-          <li class="active"><a href="{{ url_for('viewlog',id='full') }}">Full logs <span class="badge">{{ numlog }}</span></a></li>
+          <li class="active"><a href="{{ url_for('viewlog',id='full') }}">Full logs <span class="badge">{{ logs|length }}</span></a></li>
         {% else %}
           <li><a href="{{ url_for('viewlog',id='full') }}">Full logs</a></li>
         {% endif %}
         {% if 'error' in request.path %}
-          <li class="active"><a href="{{ url_for('viewlog',id='error') }}">Error <span class="badge">{{ numlog }}</span></a></li>
+          <li class="active"><a href="{{ url_for('viewlog',id='error') }}">Error <span class="badge">{{ logs|length }}</span></a></li>
         {% else %}
           <li><a href="{{ url_for('viewlog',id='error') }}">Error</a></li>
         {% endif %}
@@ -47,7 +47,7 @@ rel="stylesheet">
         <button type="submit" class="btn btn-default">Submit</button>
       </form>
       <ul class="nav navbar-nav navbar-right">
-        <li><a href="mailto:chen.yan@epfl.ch">Like it !</a></li>
+        <li><a href="mailto:ycrichard330@gmail.com">Like it !</a></li>
       </ul>
     </div>
   </div>
@@ -60,8 +60,8 @@ rel="stylesheet">
 </blockquote>
 
 
-<p>#{{1+ (numpage-1)*100}} - #{% if numlog > 100+(numpage-1)*100 %}{{ 100+ (numpage-1)*100 }}{% else %}{{ numlog }}{% endif %}.
-  <strong>共{{ numlog }}条相关日志, 过滤条件: </strong> <abbr title="current search criteria">'{{ key }}'</abbr></p>
+<p>#{{1+ (numpage-1)*100}} - #{% if logs|length > 100+(numpage-1)*100 %}{{ 100+ (numpage-1)*100 }}{% else %}{{ logs|length }}{% endif %}.
+  <strong>共{{ logs|length }}条相关日志, 过滤条件: </strong> <abbr title="current search criteria">'{{ key }}'</abbr></p>
 
 {% set id = '' %}
 {% if 'full' in request.path %}
@@ -80,10 +80,10 @@ rel="stylesheet">
   {% else %}
     <li ><a href="{{ url_for('viewlog_page',id=id,page = numpage - 1) }}">«</a></li>
   {% endif %}
-  {% for i in range(0, 1+ numlog // 100) %}
+  {% for i in range(0, 1+ logs|length // 100) %}
     <li {% if numpage == loop.index %}class="active"{% endif %}><a href="{{ url_for('viewlog_page',id=id,page = loop.index) }}">{{ loop.index }}</a></li>
   {% endfor %}
-  {% if numpage == 1+ numlog // 100 %}
+  {% if numpage == 1+ logs|length // 100 %}
     <li class="disabled"><a href="#">»</a></li>
   {% else %}
     <li ><a href="{{ url_for('viewlog_page',id=id,page = numpage + 1) }}">»</a></li>
@@ -102,7 +102,7 @@ rel="stylesheet">
     </tr>
   </thead>
   <tbody>
-    {% for line in logs %}
+    {% for line in logs[(numpage-1)*100:numpage*100] %}
         {% if line[1]=='ERROR' %}
             <tr class="danger">
         {% elif line[1]=='WARNING' %}

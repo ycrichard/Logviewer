@@ -8,7 +8,7 @@ def config_gen():
 	config = ConfigParser()
 	config['DEFAULT']['logfile'] = 'shadowsocks.logs'
 	# config['DEFAULT']['logfile'] = '/var/log/shadowsocks.log'  
-	config['DEFAULT']['IP'] = '188.154.76.109'   
+	config['DEFAULT']['IP'] = '127.0.0.1'   
 	
 	with open('logviewer.ini', 'w') as configfile:    # save
 	    config.write(configfile)
