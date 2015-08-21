@@ -1,6 +1,6 @@
 # all the imports
 import geoip2.database, re
-from flask import Flask, render_template, url_for, request, redirect
+from flask import Flask, render_template, url_for, request, redirect, session
 
 try:
     from configparser import ConfigParser
@@ -32,11 +32,17 @@ def split_logline(line):
 
 @app.route('/viewlog/')
 def viewlog_index():
-    return redirect(url_for('viewlog',id='me'))
+    session['page'] = 1
+    return redirect(url_for('viewlog',id='me',page=session['page']))
 
-@app.route('/viewlog/<string:id>', methods=['GET', 'POST'])
-def viewlog(id):
+@app.route('/viewlog/<string:id>/<int:page>', methods=['GET', 'POST'])
+def viewlog(id, page):
+    if 'page' not in session:
+        # if we have no page in the session we go to the index
+        return redirect(url_for('viewlog_index'))
     # get ip address from request user
+    session['page'] = page
+
     ip = request.remote_addr
     # user agent
     UA_string  = request.user_agent.string 
@@ -53,7 +59,7 @@ def viewlog(id):
     keyword=''
 
     if id == 'full':
-        data = [ line for line in data]
+        # data = [ line for line in data]
         keyword='.*'
     elif id == 'me':
         data = [ line for line in data
@@ -68,13 +74,25 @@ def viewlog(id):
         data = [ line for line in data 
             if re.search(request.form['text'],line, re.IGNORECASE) ]
         keyword=keyword + "' --> '" + request.form['text']
-        
+        # 
+        # data.reverse()  # reverse the timeline order 
+        # # paging slection
+        # results=data[(session['page']-1)*100:session['page']*100]
+        # results = [ split_logline(line) for line in results]
+    # 
+        # return render_template('layout_log.html', logs=results, ip=ip, 
+        #     loc=location, UA=UA_string, key=keyword, numlog=total_length, numpage=session['page'])
+
+
+    total_length=len(data)    
 
     data.reverse()	# reverse the timeline order 
-    results = [ split_logline(line) for line in data]
+    # paging slection
+    results=data[(session['page']-1)*100:session['page']*100]
+    results = [ split_logline(line) for line in results]
 
     return render_template('layout_log.html', logs=results, ip=ip, 
-    	loc=location, UA=UA_string, key=keyword)
+    	loc=location, UA=UA_string, key=keyword, numlog=total_length, numpage=session['page'])
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', debug=True)
