@@ -33,23 +33,22 @@ def split_logline(line):
 def user_info():
     # get ip address from request user
     session['ip']=request.remote_addr
-    session['UA']=request.user_agent.string 
+    session['UA']=request.user_agent.string
     try:
         response = reader.city(session['ip'])
         location = response.city.names['zh-CN'] +', '+ response.country.names['zh-CN']
     except:
-        location = 'unknown location'       
+        location = 'unknown location'
     session['location']=location
 
 @app.route('/viewlog/')
 def viewlog_index():
-    
     if 'ip' not in session:
         user_info()
     return redirect(url_for('viewlog_page',id='me',page=1))
 
 @app.route('/viewlog/<string:id>/')
-def viewlog(id): 
+def viewlog(id):
 
     if 'ip' not in session:
         user_info()
@@ -70,8 +69,7 @@ def viewlog_page(id, page):
 
     # read log file
     with open(logfile,'r') as f:
-        data = f.readlines()   
-
+        data = f.readlines()
     if id == 'full':
         session['keyword']='.*'
     elif id == 'me':
@@ -83,7 +81,7 @@ def viewlog_page(id, page):
          if re.search(r'\s+ERROR\s+|\s+WARNING\s+',line)]
         session['keyword']='ERROR|WARNING'
     elif id == 'search':
-        data = [ line for line in data 
+        data = [ line for line in data
          if re.search(session['keyword'],line, re.IGNORECASE) ]
     else:
         return 'Page do not existe'
@@ -91,11 +89,11 @@ def viewlog_page(id, page):
     if (page > len(data) //100 +1)|(page <=0) :
        return 'Page index out of range'
 
-    data.reverse()	# reverse the timeline order 
+    data.reverse()	# reverse the timeline order
     results = [ split_logline(line) for line in data] # table structure
 
-    return render_template('layout_log.html', logs=results, numpage=page, key=session['keyword'], 
+    return render_template('layout_log.html', logs=results, numpage=page, key=session['keyword'],
         ip=session['ip'], loc=session['location'], UA=session['UA'])
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', debug=True)
+    app.run(host='0.0.0.0', port=5000， debug=True)
