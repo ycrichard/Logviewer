@@ -1,6 +1,6 @@
 # Logviewer
 
-A web application for the server to display and search shadowsock's log according to user information.
+A web application for the server to display and search log according to user information.
 
 Visitor's IP address, user-agent and geo-location is detected.
 
